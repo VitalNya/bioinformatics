@@ -1,0 +1,261 @@
+---
+title: "R Notebook"
+output: divide it into the different time points then calculate maternal preference for each gene at each time point, then create a dataframe that has the maternal preference at each timepoint for each gene. then graph our zeins maternal preference across time
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+#C:/Users/vitalnya/
+#C:/Users/vital/
+imp.all.rpm2 = read.table( "C:/Users/vitalnya/Box/AndersonLab_Cybox/Vital_Nyabashi/timepoint.rpm.txt")
+zein_key <- read.table("//las-dfs-01.las.iastate.edu/lss/research/sna-lab/kmh/data/zein_gene_key.txt")
+
+#We want to know whether things are genes or TEs so we define that with this command, which asks if the rownames are longer than 20 characters (genes are 14 or 15 characters long) or if it contains the label 'TE' 
+imp.all.rpm2$feature_type <- ifelse(nchar(rownames(imp.all.rpm2)) > 20 |grepl("TE",rownames(imp.all.rpm2)), "TE","gene")# Label features as TEs or genes
+table(imp.all.rpm2$feature_type)
+
+imp.all.rpm2$genome <-ifelse(grepl("Zm00001e|B73",rownames(imp.all.rpm2)),"B73",ifelse(grepl("Zm00004b|W22",rownames(imp.all.rpm2)), "W22","NA")) # Label which genome the feature annotation is from
+table(imp.all.rpm2$genome)
+
+```
+
+#Subset one contrast and give the contrast a name, in this case it would be the timepoint
+
+#11DAP
+```{r}
+imp.11.rpm <- imp.all.rpm2[,c(1:5)]
+imp.11.rpm$feature_type <-imp.all.rpm2$feature_type
+imp.11.rpm$genome <- imp.all.rpm2$genome
+imp.11.rpm$timepoint <- "11DAP"
+
+#Create a new column to simplify using which genome the gene originated from 
+imp.11.rpm$type <- ifelse(imp.11.rpm$genome == "B73","A","B")
+#transfer rownames
+imp.11.rpm$feature <- rownames(imp.11.rpm)
+
+#Rename columns, reduce the 'cross' columns for comparisons with fewer columns
+names(imp.11.rpm) <- c("cross1","cross2","cross3", "cross4","cross5","feature_type","genome","contrast","type","feature")
+
+#Create the A_mean and B_mean, in this example B73 is the first 3 columns of the subset dataframe, so I ask for the mean of those three columns as the A_mean, and the other 3 as the B_mean
+imp.11.rpm$A_mean <- rowMeans(imp.11.rpm[,1:3])
+imp.11.rpm$B_mean <- rowMeans(imp.14.rpm[,4:5])
+
+#here is the calculation of maternal preference
+imp.11.rpm$maternal_preference <- ifelse(imp.11.rpm$type == "A",imp.11.rpm$A_mean/(imp.11.rpm$B_mean + imp.11.rpm$A_mean) ,imp.11.rpm$B_mean/(imp.11.rpm$B_mean + imp.11.rpm$A_mean))
+
+```
+
+#14DAP
+```{r}
+imp.14.rpm <- imp.all.rpm2[,c(13:17)]
+imp.14.rpm$feature_type <-imp.all.rpm2$feature_type
+imp.14.rpm$genome <- imp.all.rpm2$genome
+imp.14.rpm$timepoint <- "14DAP"
+
+#Create a new column to simplify using which genome the gene originated from 
+imp.14.rpm$type <- ifelse(imp.14.rpm$genome == "B73","A","B")
+#transfer rownames
+imp.14.rpm$feature <- rownames(imp.14.rpm)
+
+#Rename columns, reduce the 'cross' columns for comparisons with fewer columns
+names(imp.14.rpm) <- c("cross1","cross2","cross3", "cross4","cross5","feature_type","genome","contrast","type","feature")
+
+#Create the A_mean and B_mean, in this example B73 is the first 3 columns of the subset dataframe, so I ask for the mean of those three columns as the A_mean, and the other 3 as the B_mean
+imp.14.rpm$A_mean <- rowMeans(imp.14.rpm[,1:3])
+imp.14.rpm$B_mean <- rowMeans(imp.14.rpm[,4:5])
+
+#here is the calculation of maternal preference
+imp.14.rpm$maternal_preference <- ifelse(imp.14.rpm$type == "A",imp.14.rpm$A_mean/(imp.14.rpm$B_mean + imp.14.rpm$A_mean) ,imp.14.rpm$B_mean/(imp.14.rpm$B_mean + imp.14.rpm$A_mean))
+
+```
+
+
+#17DAP
+```{r}
+imp.17.rpm <- imp.all.rpm2[,c(13:17)]
+imp.17.rpm$feature_type <-imp.all.rpm2$feature_type
+imp.17.rpm$genome <- imp.all.rpm2$genome
+imp.17.rpm$timepoint <- "17DAP"
+
+#Create a new column to simplify using which genome the gene originated from 
+imp.17.rpm$type <- ifelse(imp.17.rpm$genome == "B73","A","B")
+#transfer rownames
+imp.17.rpm$feature <- rownames(imp.17.rpm)
+
+#Rename columns, reduce the 'cross' columns for comparisons with fewer columns
+names(imp.17.rpm) <- c("cross1","cross2","cross3", "cross4","cross5","feature_type","genome","contrast","type","feature")
+
+#Create the A_mean and B_mean, in this example B73 is the first 3 columns of the subset dataframe, so I ask for the mean of those three columns as the A_mean, and the other 3 as the B_mean
+imp.17.rpm$A_mean <- rowMeans(imp.17.rpm[,1:3])
+imp.17.rpm$B_mean <- rowMeans(imp.17.rpm[,4:5])
+
+#here is the calculation of maternal preference
+imp.17.rpm$maternal_preference <- ifelse(imp.17.rpm$type == "A",imp.17.rpm$A_mean/(imp.17.rpm$B_mean + imp.17.rpm$A_mean) ,imp.17.rpm$B_mean/(imp.17.rpm$B_mean + imp.17.rpm$A_mean))
+```
+
+#21DAP
+```{r}
+imp.21.rpm <- imp.all.rpm2[,c(19:23)]
+imp.21.rpm$feature_type <-imp.all.rpm2$feature_type
+imp.21.rpm$genome <- imp.all.rpm2$genome
+imp.21.rpm$timepoint <- "21DAP"
+
+#Create a new column to simplify using which genome the gene originated from 
+imp.21.rpm$type <- ifelse(imp.21.rpm$genome == "B73","A","B")
+#transfer rownames
+imp.21.rpm$feature <- rownames(imp.21.rpm)
+
+#Rename columns, reduce the 'cross' columns for comparisons with fewer columns
+names(imp.21.rpm) <- c("cross1","cross2","cross3", "cross4","cross5","feature_type","genome","contrast","type","feature")
+
+#Create the A_mean and B_mean, in this example B73 is the first 3 columns of the subset dataframe, so I ask for the mean of those three columns as the A_mean, and the other 3 as the B_mean
+imp.21.rpm$A_mean <- rowMeans(imp.21.rpm[,1:3])
+imp.21.rpm$B_mean <- rowMeans(imp.21.rpm[,4:5])
+
+#here is the calculation of maternal preference
+imp.21.rpm$maternal_preference <- ifelse(imp.21.rpm$type == "A",imp.21.rpm$A_mean/(imp.21.rpm$B_mean + imp.21.rpm$A_mean) ,imp.21.rpm$B_mean/(imp.21.rpm$B_mean + imp.21.rpm$A_mean))
+```
+ 
+
+```{r}
+#Create a dataframe that has the maternal preference at each timepoint for each gene
+
+# Combine the data frames using the merge function
+merged_df <- rbind( imp.14.rpm, imp.17.rpm, imp.21.rpm, imp.11.rpm)
+
+data_set1<-merged_df[!grepl("NaN",merged_df$maternal_preference),]
+data_set1$exp <- ifelse(data_set1$maternal_preference >= 0.8, "possible MEG",
+                         ifelse(data_set1$maternal_preference < 0.35, "possible PEG", "biparental"))
+
+
+
+zein_synt <- read.table("//las-dfs-01.las.iastate.edu/lss/research/sna-lab/kmh/data/zein_gene_key.txt")
+colnames(zein_synt) <- zein_synt[c(1),]
+zein_synt2 <- zein_synt[-c(1),]
+
+zein<- read.table("//las-dfs-01.las.iastate.edu/lss/research/sna-lab/kmh/data/zein_gene_key_listed.txt")
+data_set <- subset(data_set1, data_set1$feature %in% zein$V1)
+
+
+#remove values that are too low
+```
+
+
+# plot the zeins maternal preference across time using a function
+```{r}
+
+library(gridExtra)
+library(grid)
+data_set_Function<- function(gene){
+  data_set <- subset(data_set, data_set$feature == gene)
+  # Calculate 'exp' column using ifelse
+  data_set$exp <- ifelse(data_set$maternal_preference >= 0.8, "possible MEG",
+                         ifelse(data_set$maternal_preference < 0.35, "possible PEG", "biparental"))
+  
+  ggplot(data_set, aes(x = contrast, y = maternal_preference, color = exp)) + 
+    geom_point() +
+    geom_line() +
+    scale_color_manual("Predicted expression", values = c("possible MEG" = "maroon", "possible PEG" = "navy", "biparental" = "darkgrey")) +
+    ylim(0, 1)+ theme(axis.text.x = element_text(angle = 45, hjust = 1), text = element_text(size = 10)) + 
+    ggtitle(gene)
+}
+
+
+
+data_set_Function("Zm00001eb030130")
+
+
+
+
+list(unique(data_set1$feature))
+
+a <- data_set_Function("Zm00001eb030130")
+b <- data_set_Function("Zm00001eb030160")
+c <- data_set_Function("Zm00001eb166580")
+d <- data_set_Function("Zm00001eb166600")
+e <- data_set_Function("Zm00001eb166610") 
+f <- data_set_Function("Zm00001eb166660")
+
+g <- data_set_Function("Zm00001eb166670")
+h <- data_set_Function("Zm00001eb166940")
+i <- data_set_Function("Zm00001eb166950")
+j <- data_set_Function("Zm00001eb171940")
+k <- data_set_Function("Zm00001eb267570")
+l <- data_set_Function("Zm00001eb281380") # 12
+
+m <- data_set_Function("Zm00001eb303130")
+n <- data_set_Function("Zm00001eb303160")
+o <- data_set_Function("Zm00001eb313790")
+p <- data_set_Function("Zm00001eb355270")
+q <- data_set_Function("Zm00001eb382030")
+r <- data_set_Function("Zm00004b002717")
+
+s <- data_set_Function("Zm00004b002718")
+t <- data_set_Function("Zm00004b020267")
+u <- data_set_Function("Zm00004b020270")
+v <- data_set_Function("Zm00004b020298")
+w <- data_set_Function("Zm00004b020299")
+x <- data_set_Function("Zm00004b026780")
+
+x1 <- data_set_Function("Zm00004b028826")
+
+y <- data_set_Function("Zm00004b032428")
+z <- data_set_Function("Zm00004b036075")
+z1 <-data_set_Function("Zm00004b036076")
+aa<-data_set_Function("Zm00004b036199")
+ab <- data_set_Function("Zm00001eb313800")
+ac<-data_set_Function("Zm00001eb315100")
+
+grid.arrange(a,b,c,d,e)
+grid.arrange(g,h,i,j,k,l,ac)
+grid.arrange(m,n,o,p,q,r)
+grid.arrange(t,u,v,w,x,y)
+grid.arrange(x1,s,z,z1,aa)
+
+```
+
+
+```{r}
+zein_synt <- read.table("//las-dfs-01.las.iastate.edu/lss/research/sna-lab/kmh/data/zein_gene_key.txt")
+colnames(zein_synt) <- zein_synt[c(1),]
+zein_synt2 <- zein_synt[-c(1),]
+
+zein<- read.table("//las-dfs-01.las.iastate.edu/lss/research/sna-lab/kmh/data/zein_gene_key_listed.txt")
+zein_mat_pref <- subset(data_set, data_set$feature %in% zein$V1)
+
+df <- melt.data.table(as.data.table(zein_synt2,id.vars= "B73",variable.name = "syntelogs"))
+#create feature column to use for matching in right_join command, and include the B73 names if it just says 'NA'
+df$feature <- ifelse(is.na(df$value),paste(df$V2), paste(df$value))
+df$value<- NULL
+
+
+df2 <- right_join(df, zein_mat_pref, by = "feature")
+
+#Create new B73 name column to ensure we have all maternal values listed
+df2$B73_2 <-ifelse(is.na(df2$B73) & grepl("Zm00001", df2$feature),paste(df2$feature), paste(df2$B73))
+#Remove columns we no longer need
+df2[,c(1:2)] <- NULL
+
+#Remove rows that have low expression for zeins
+#df3 <- subset(df2, rowSums(df2[c("A_mean","B_mean")]) > 2)
+
+#Remove rows that aren't associated with a B73 gene
+df4 <- subset(df2, df2$B73_2 != 'NA')
+
+#Create contrast_genome column
+df4$cont_genome <- paste(df4$genome, "_", df4$contrast)
+
+#ORGANIZE THE DATAFRAME df4 SO THAT THE STRING IN THE  cont_genome COLUMB IS IN ALPHABITICAL ORDER BASED STARTING FROM THE LAST TWO LETTERS
+df4 <- df4[order(substr(df4$cont_genome, nchar(df4$cont_genome) - 1, nchar(df4$cont_genome))), ]
+
+syntplot <- df4
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
